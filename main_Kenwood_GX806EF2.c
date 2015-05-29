@@ -1,8 +1,8 @@
-#define CLOCK 9600000
+п»ї#define CLOCK 9600000
 #include <inavr.h>
 
-__regvar __no_init unsigned char mode @15;  // режим работы, 0: не перехватываем i2c
-__regvar __no_init unsigned char xxx @14;   // временная переменная для поиска START последовательности
+__regvar __no_init unsigned char mode @15;  // СЂРµР¶РёРј СЂР°Р±РѕС‚С‹, 0: РЅРµ РїРµСЂРµС…РІР°С‚С‹РІР°РµРј i2c
+__regvar __no_init unsigned char xxx @14;   // РІСЂРµРјРµРЅРЅР°СЏ РїРµСЂРµРјРµРЅРЅР°СЏ РґР»СЏ РїРѕРёСЃРєР° START РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё
 
 unsigned char check1(void)
 {
@@ -26,18 +26,18 @@ void main(void)
 {
   mode=0;
 
-  DDRB=0x00;          // все ноги входы
-  PORTB=0xFE;         // с подтяжками к питанию
+  DDRB=0x00;          // РІСЃРµ РЅРѕРіРё РІС…РѕРґС‹
+  PORTB=0xFE;         // СЃ РїРѕРґС‚СЏР¶РєР°РјРё Рє РїРёС‚Р°РЅРёСЋ
 
-  MCUCR|=0x03;        // прерывание
-  GIMSK=(1<<INT0);    // по переднему фронту на INT0 (PB1, SCL)
+  MCUCR|=0x03;        // РїСЂРµСЂС‹РІР°РЅРёРµ
+  GIMSK=(1<<INT0);    // РїРѕ РїРµСЂРµРґРЅРµРјСѓ С„СЂРѕРЅС‚Сѓ РЅР° INT0 (PB1, SCL)
 
   xxx=PINB;
 
   while(1)
   {
   waiting_for_start:
-    // нажата ли кнопка?
+    // РЅР°Р¶Р°С‚Р° Р»Рё РєРЅРѕРїРєР°?
     if ((PINB&(1<<PB3))==0x00)
     {
       __delay_cycles(CLOCK/1000*300);
@@ -95,7 +95,7 @@ void main(void)
     if (check0()) goto waiting_for_start;
     // 0
     if (check0()) goto waiting_for_start;
-    // перенастраиваем INT0 за задний фронт
+    // РїРµСЂРµРЅР°СЃС‚СЂР°РёРІР°РµРј INT0 Р·Р° Р·Р°РґРЅРёР№ С„СЂРѕРЅС‚
     MCUCR&=~0x03;
     MCUCR|=0x02;
     GIFR|=(1<<INTF0);
@@ -114,22 +114,22 @@ void main(void)
     // 1
     if (check1()) goto waiting_for_start;
 
-    // перенастраиваем INT0 за задний фронт
+    // РїРµСЂРµРЅР°СЃС‚СЂР°РёРІР°РµРј INT0 Р·Р° Р·Р°РґРЅРёР№ С„СЂРѕРЅС‚
     MCUCR&=~0x03;
     MCUCR|=0x02;
-    // ждем 2 задних фронта
+    // Р¶РґС‘Рј 2 Р·Р°РґРЅРёС… С„СЂРѕРЅС‚Р°
     GIFR|=(1<<INTF0);
     while (!(GIFR&(1<<INTF0)));
-    // давим SDA
+    // РґР°РІРёРј SDA
     PORTB&=~(1<<PB0);DDRB|=(1<<PB0);
-    // на один такт
+    // РЅР° РѕРґРёРЅ С‚Р°РєС‚
     GIFR|=(1<<INTF0);
     while (!(GIFR&(1<<INTF0)));
     GIFR|=(1<<INTF0);
     MCUCR|=0x03;
-    // отпускаем SDA
+    // РѕС‚РїСѓСЃРєР°РµРј SDA
     DDRB&=~(1<<PB0);
-    // идем ждать старта следующей посылки
+    // РёРґС‘Рј Р¶РґР°С‚СЊ СЃС‚Р°СЂС‚Р° СЃР»РµРґСѓСЋС‰РµР№ РїРѕСЃС‹Р»РєРё
     goto waiting_for_start;
   }
 }
