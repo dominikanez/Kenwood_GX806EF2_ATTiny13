@@ -95,22 +95,12 @@ void main(void)
     if (check0()) goto waiting_for_start;
     // 0
     if (check0()) goto waiting_for_start;
-    // перенастраиваем INT0 за задний фронт
-    MCUCR&=~0x03;
-    MCUCR|=0x02;
-    GIFR|=(1<<INTF0);
-    while (!(GIFR&(1<<INTF0)));
-    GIFR|=(1<<INTF0);
-    MCUCR|=0x03;
-
-    PORTB|=(1<<PB0);DDRB|=(1<<PB0);
-
-    // 0-1
-    if (check1()) goto waiting_for_start;
-    // 0-1
-    if (check1()) goto waiting_for_start;
-    // 0-1
-    if (check1()) goto waiting_for_start;
+    // 0
+    if (check0()) goto waiting_for_start;
+    // 0
+    if (check0()) goto waiting_for_start;
+    // 0
+    if (check0()) goto waiting_for_start;
     // 1
     if (check1()) goto waiting_for_start;
 
